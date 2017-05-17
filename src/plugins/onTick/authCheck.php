@@ -317,9 +317,9 @@ class authCheck
             }
         }
         if ($this->nameEnforce) {
-            $newNick = $corpTicker . $this->dbusers[$discordID]['eveName'];
+            $newNick = $this->dbusers[$discordID]['eveName']. $corpTicker;
         } else {
-            $newNick = $corpTicker . $discordNick;
+            $newNick = $discordNick . $corpTicker;
         }
         if ($newNick !== $discordNick) {
             queueRename($discordID, $newNick, $this->guildID);

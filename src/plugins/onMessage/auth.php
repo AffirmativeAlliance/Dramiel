@@ -235,11 +235,11 @@ class auth
                     //Add ticker if set and change name if nameEnforce is on
                     if (isset($setTicker) || isset($nameEnforce)) {
                         if (isset($setTicker) && isset($nameEnforce)) {
-                            $nick = "[{$corpTicker}] {$eveName}";
+                            $nick = "{$eveName} [{$corpTicker}]";
                         } elseif (null === $setTicker && isset($nameEnforce)) {
                             $nick = "{$eveName}";
                         } elseif (isset($setTicker) && !isset($nameEnforce)) {
-                            $nick = "[{$corpTicker}] {$userName}";
+                            $nick = "{$userName} [{$corpTicker}]";
                         }
                     }
                     if (null !== $nick) {
