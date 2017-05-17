@@ -130,6 +130,7 @@ function characterID($characterName)
 
     try {
         // Initialize a new request for this URL
+        $logger->info('Requesting character id for ' . $characterName);
         $ch = curl_init("https://esi.tech.ccp.is/latest/search/?search={$characterName}&categories=character&language=en-us&strict=true&datasource=tranquility");
         // Set the options for this request
         curl_setopt_array($ch, array(
