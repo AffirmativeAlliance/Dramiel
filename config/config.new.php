@@ -95,6 +95,7 @@ $config['enabledPlugins'] = array( // remove the slashes for the plugins you wan
     //'fleetUpOperations', // integrate with fleet up and post any new operations and then ping them when they get close
     //'fleetUpOps', //show upcoming fleet up operations with a message command
     //'rssReader', //Post news to rss feeds
+    //'welcome', // welcomes newly joined users via DM
 );
 
 
@@ -104,6 +105,9 @@ $config['plugins'] = array(
         'fromIDs' => array(0, 0), // fill in with corp/alliance id's you want info from (have to be accessible with the api)
         'channelID' => 0 // what channel id like these to post too
     ),
+     'welcome' => array(
+          'welcomeInfo' => '' // Welcome info text, displayed after the greeting
+      ),
     'fileReader' => array(
         'db' => '/tmp/discord.db',
         'channelConfig' => array(

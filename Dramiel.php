@@ -2,7 +2,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2016  Robert Sardinia
+ * Copyright (c) 2016  Robert Sardinia, 2017 ChrisWF
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -105,6 +105,26 @@ foreach ($pluginDirs as $dir) {
 // Number of plugins loaded
 $logger->info('Loaded: ' . count($pluginsT) . ' background plugins');
 
+$pluginsJ = array();
+$pluginDirs = array('src/plugins/onJoin/*.php');
+foreach ($pluginDirs as $dir) {
+    foreach (glob($dir) as $plugin) {
+        // Only load the plugins we want to load, according to the config
+        if (!in_array(str_replace('.php', '', basename($plugin)), $config['enabledPlugins'])) {
+            continue;
+        }
+
+        /** @noinspection PhpIncludeInspection */
+        require_once $plugin;
+        $fileName = str_replace('.php', '', basename($plugin));
+        $p = new $fileName();
+        $p->init($config, $discord, $logger);
+        $pluginsJ[] = $p;
+    }
+}
+// Number of plugins loaded
+$logger->info('Loaded: ' . count($pluginsJ) . ' join plugins');
+
 if ($config['bot']['silentMode'] == 'false' || !isset($config['bot']['silentMode'])) {
 // Load chat plugins
     $pluginDirs = array('src/plugins/onMessage/*.php', 'src/plugins/admin/*.php');
@@ -146,7 +166,7 @@ dbPrune();
 
 $discord->on(
     'ready',
-    function($discord) use ($logger, $config, $plugins, $pluginsT) {
+    function($discord) use ($logger, $config, $plugins, $pluginsT, $pluginsJ) {
         // In here we can access any of the WebSocket events.
         //
         // There is a list of event constants that you can
@@ -286,6 +306,23 @@ $discord->on(
                         }
                     }
                 }
+            }
+        );
+        $discord->on(
+            Event::GUILD_MEMBER_ADD,
+            function($member) use ($logger, $config, $pluginsJ) 
+            {
+               $logger->addInfo('Processing "join" plugins...');
+               foreach ($pluginsJ as $plugin) 
+               {
+                  try 
+                  {
+                     $plugin->onJoin($member);
+                  } catch (Exception $e) 
+                  {
+                     $logger->addError('Error: ' . $e->getMessage());
+                  }
+               }           
             }
         );
     }
